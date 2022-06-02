@@ -20,9 +20,9 @@ endif
 install-exec-hook:
 if BUILD_FOR_LINUX
 if INSTALL_SYSTEMD_STARTUP
-	[ -e $(DESTDIR)$(libdir)/systemd/system ] || mkdir -p $(DESTDIR)$(libdir)/systemd/system
+	[ -e $(DESTDIR)/usr/lib/systemd/system ] || mkdir -p $(DESTDIR)/usr/lib/systemd/system
 # don't replace a service file if it already exists...
-	[ -e $(DESTDIR)$(libdir)/systemd/system/nqptp.service ] || cp nqptp.service $(DESTDIR)$(libdir)/systemd/system
+	[ -e $(DESTDIR)/usr/lib/systemd/system/nqptp.service ] || cp nqptp.service $(DESTDIR)/usr/lib/systemd/system
 endif
 endif
  # no installer for FreeBSD yet
