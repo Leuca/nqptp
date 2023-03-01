@@ -1,3 +1,7 @@
 function get_source_ver () {
     cat configure.ac | grep AC_INIT | cut -d"-" -f 1 | cut -d"[" -f 3
 }
+
+function get_release {
+       head RELEASE_NOTES.md | sed -ne '/Version/p' | head -1 | cut -d"-" -f 3
+}

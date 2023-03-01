@@ -1,8 +1,6 @@
-%global source_ver {{{ get_source_ver }}}
-
 Name:           {{{ git_dir_name }}}-unstable
-Version:        {{{ git_dir_version lead=%{source_ver} }}}
-Release:        1%{?dist}
+Version:        {{{ get_source_ver }}}
+Release:        {{{ get_release }}}%{?dist}
 Summary:        Not Quite PTP (unstable)
 
 License:        GPLv2+
