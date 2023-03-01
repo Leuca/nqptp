@@ -47,8 +47,8 @@ autoreconf -fi
 
 %files
 %license LICENSE
-%{_bindir}/%{name}
-%{_unitdir}/%{name}.service
+%{_bindir}/nqptp
+%{_unitdir}/nqptp.service
 
 %changelog
 {{{ git_dir_changelog }}}
