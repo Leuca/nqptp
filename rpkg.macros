@@ -1,0 +1,3 @@
+function get_source_ver () {
+    cat configure.ac | grep AC_INIT | cut -d"-" -f 1 | cut -d"[" -f 3
+}

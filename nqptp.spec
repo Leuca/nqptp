@@ -1,5 +1,7 @@
+%global source_ver {{{ get_source_ver }}}
+
 Name:           {{{ git_dir_name }}}
-Version:        {{{ git_dir_version }}}
+Version:        {{{ git_dir_version lead=%{source_ver} }}}
 Release:        1%{?dist}
 Summary:        Not Quite PTP
 
