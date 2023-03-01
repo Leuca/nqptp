@@ -1,19 +1,19 @@
-Name:		{{{ git_dir_name }}}
-Version:	{{{ git_dir_version }}}
-Release:	1%{?dist}
-Summary:	Not Quite PTP
+Name:           {{{ git_dir_name }}}
+Version:        {{{ git_dir_version }}}
+Release:        1%{?dist}
+Summary:        Not Quite PTP
 
-License:	GPLv2+
-URL:		https://github.com/mikebrady/nqptp
-VCS:		{{{ git_dir_vcs }}}
+License:        GPLv2+
+URL:            https://github.com/mikebrady/nqptp
+VCS:            {{{ git_dir_vcs }}}
 
-Source:		{{{ git_dir_pack }}}
+Source:         {{{ git_dir_pack }}}
 
-BuildRequires:	gcc
-BuildRequires:	autoconf
-BuildRequires:	automake
-BuildRequires:	make
-BuildRequires:	systemd-rpm-macros
+BuildRequires:  gcc
+BuildRequires:  autoconf
+BuildRequires:  automake
+BuildRequires:  make
+BuildRequires:  systemd-rpm-macros
 
 
 %description
