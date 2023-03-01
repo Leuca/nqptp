@@ -1,9 +1,9 @@
 %global source_ver {{{ get_source_ver }}}
 
-Name:           {{{ git_dir_name }}}
+Name:           {{{ git_dir_name }}}-unstable
 Version:        {{{ git_dir_version lead=%{source_ver} }}}
 Release:        1%{?dist}
-Summary:        Not Quite PTP
+Summary:        Not Quite PTP (unstable)
 
 License:        GPLv2+
 URL:            https://github.com/mikebrady/nqptp
@@ -22,6 +22,8 @@ BuildRequires:  systemd-rpm-macros
 nqptp is a daemon that monitors timing data from any PTP clocks – up to 64 – it sees on ports 319 and 320. It maintains records for each clock, identified by Clock ID and IP.
 
 It is a companion application to Shairport Sync and provides timing information for AirPlay 2 operation.
+
+This version of nqptp has been built from the development branch
 
 %prep
 {{{ git_dir_setup_macro }}}
