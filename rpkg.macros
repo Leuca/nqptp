@@ -1,7 +1,13 @@
 function get_source_ver () {
-    cat configure.ac | grep AC_INIT | cut -d"-" -f 1 | cut -d"[" -f 3
+    cat configure.ac | grep AC_INIT | cut -d"-" -f 1 | cut -d"[" -f 3 | cut -d"d" -f 1
 }
 
 function get_release {
-       head RELEASE_NOTES.md | sed -ne '/Version/p' | head -1 | cut -d"-" -f 3
+    rel="$(head RELEASE_NOTES.md | sed -ne '/Version/p' | head -1 | cut -s -d"-" -f 3)"
+    if [ "$rel" == "" ]
+    then
+        echo -n "$(git rev-list --all --count)"
+    else
+        echo -n "$rel"
+    fi
 }
