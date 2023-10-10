@@ -30,6 +30,9 @@ This version of nqptp has been built from the development branch
 # Avoid creating user and groups during package build
 sed -i '/getent/d' Makefile.am
 
+# Fix systemd unit path
+sed -i 's!$(libdir)!/usr/lib!g' Makefile.am
+
 autoreconf -fi
 %configure --with-systemd-startup
 %make_build
