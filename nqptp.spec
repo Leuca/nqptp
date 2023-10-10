@@ -27,12 +27,19 @@ This version of nqptp has been built from the development branch
 {{{ git_dir_setup_macro }}}
 
 %build
+# Avoid creating user and groups during package build
+sed -i '/getent/d' Makefile.am
+
 autoreconf -fi
 %configure --with-systemd-startup
 %make_build
 
 %install
 %make_install
+
+%pre
+getent group %{name} &>/dev/null || groupadd -r %{name} &>/dev/null
+getent passwd %{name} &> /dev/null || useradd -r -M -g %{name} -s /sbin/nologin nqptp &>/dev/null
 
 %post
 %systemd_post %{name}.service
