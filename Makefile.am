@@ -19,13 +19,11 @@ endif
 
 install-exec-hook:
 if BUILD_FOR_LINUX
-# Note: NQPTP runs as user/group nqptp/nqptp on Linux.
-# Access is given via AmbientCapabilities in the service file.
-# If you want to run it from the command line, e.g. for debugging, run it as root user.
+# Note: 1. NQPTP runs as a dynamic user on systemd-based Linux.
+#       2. Access to ports 319 and 320 is given via AmbientCapabilities in the service file.
+# If you want to run NQPTP from the command line, e.g. for debugging, run it as root user.
 # no installer for System V
 if INSTALL_SYSTEMD_STARTUP
-	getent group nqptp &>/dev/null || groupadd -r nqptp &>/dev/null
-	getent passwd nqptp &> /dev/null || useradd -r -M -g nqptp -s /usr/sbin/nologin nqptp &>/dev/null
 	[ -e $(DESTDIR)$(libdir)/systemd/system ] || mkdir -p $(DESTDIR)$(libdir)/systemd/system
 # don't replace a service file if it already exists...
 	[ -e $(DESTDIR)$(libdir)/systemd/system/nqptp.service ] || cp nqptp.service $(DESTDIR)$(libdir)/systemd/system
@@ -40,4 +38,7 @@ if INSTALL_FREEBSD_STARTUP
 endif
 endif
 
- 
+if BUILD_FOR_OPENBSD
+# NQPTP starts as root on OpenBSD to access ports 319 and 320
+# and drops privileges to the user shairport is running as.
+endif

@@ -1,6 +1,14 @@
+## Version: 1.2.5-dev-24-g494ff3f
+* Following a [suggestion](https://github.com/mikebrady/nqptp/issues/33) by [Jörn Nettingsmeier](https://github.com/nettings), use the `DynamicUser` facility provided by `systemd` to define the system user needed to run the NQPTP daemon. Many thanks to them. New installations will use this arrangement.
+  Optionally, if you wish to use it on an existing installation:
+  ```
+  # rm /usr/local/lib/systemd/system/nqptp.service
+  # systemctl daemon-reload
+  ```
+  before building and installing NQPTP.  
+
 ## Version: 1.2.5-dev-18-gb8384c4
 * Documentation fix. Thanks to [Rudi Heitbaum](https://github.com/heitbaum) for a documentation fix in [PR 34](https://github.com/mikebrady/nqptp/pull/34).
-
 ## Version: 1.2.5-dev-16-g32bfe78
 * OpenBSD compatibility, thanks to the work of [Klemens Nanni](https://github.com/klemensn) in [PR 31](https://github.com/mikebrady/nqptp/pull/31). This work includes: using OpenBSD's `pledge(2)` facilities to harden the security of NQPTP, dropping priviliges as soon as possible, and running as the same user as the Shairport Sync application. (Note that at present on Linux, NQPTP runs as the user `nqptp` while Shairport Sync runs as the user `shairport-sync`. For consistency, this may change in future.)  
 ## Version: 1.2.5-dev-5-g475d7a1
@@ -9,8 +17,13 @@
 * Stop using `setcap` on the `nqptp` binary at install time and instead use systemd's AmbientCapabilities to give the `nqptp` daemon the capability to access ports 319 and 320. Many thanks to [Hs_Yeah](https://github.com/Hs-Yeah) for the [PR](https://github.com/mikebrady/nqptp/pull/26).
 * Improve some error messages.
 * Update a few documentation errors.
+* Fix some compilation errors on FreeBSD. Thanks to [Emanuel Haupt](https://github.com/ehaupt) who also discovered these errors and proposed a fix.
 
 When updating NQPTP on Linux, be sure to remove old service files as directed in the [README](https://github.com/mikebrady/nqptp/blob/main/README.md#remove-old-service-files).
+Note: Shairport Sync must be using Shared Memory Interface Version: `smi10`. Check by running:
+```
+$ shairport-sync -V
+```
 
 ## Version: 1.2.4
 This is an important security update. The Shared Memory Interface of the updated NQPTP is now 10, i.e. `smi10`:

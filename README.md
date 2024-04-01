@@ -3,9 +3,6 @@
 
 It is a companion application to [Shairport Sync](https://github.com/mikebrady/shairport-sync) and provides timing information for AirPlay 2 operation.
 
-# Development
-This branch -- the `development` branch -- changes relatively rapidly and may contain significant bugs. The `main` branch is the most stable. Use it with the `development` branch of Shairport Sync.
-
 ## Installation
 
 This guide is for recent Linux and FreeBSD systems.
@@ -28,7 +25,7 @@ Version: 1.1-dev. Shared Memory Interface Version: 5.
 If you are updating from version `1.2.4` or earlier in Linux, remove the service file `nqptp.service` from the directories `/lib/systemd/system` and `/usr/local/lib/systemd/system` (you'll need superuser privileges):
 ```
 # rm /lib/systemd/system/nqptp.service
-# /usr/local/lib/systemd/system/nqptp.service
+# rm /usr/local/lib/systemd/system/nqptp.service
 # systemctl daemon-reload
 ```
 Don't worry if you get a message stating that the files doesn't exist -- no harm done.
@@ -115,7 +112,7 @@ If your system runs a firewall, ensure that ports 319 and 320 are open for UDP t
 ## Notes
 The `nqptp` application requires exclusive access to ports 319 and 320.
 This means that it can not coexist with any other user of those ports, such as full PTP service daemons.
-In Linux, `nqptp` runs as a low-priviliged user but is given special access to ports 319 and 320 during installation using the `setcap` utility.
+In Linux, `nqptp` runs as a low-priviliged user but is given special access to ports 319 and 320 using systemd `AmbientCapabilities`.
 In FreeBSD, `nqptp` runs as `root` user.
 
 ## Programming Notes
