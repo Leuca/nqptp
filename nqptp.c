@@ -185,7 +185,16 @@ int main(int argc, char **argv) {
 
   // debug(1, "size of a clock entry is %u bytes.", sizeof(clock_source_private_data));
   atexit(goodbye);
-
+  
+  
+  // try to set a real time scheduling policy with a priority of -6
+  int policy = SCHED_FIFO;
+  struct sched_param param;
+  param.sched_priority = 5;
+  int s = pthread_setschedparam(pthread_self(), policy, &param);
+  if (s != 0)
+    debug(1, "pthread_setschedparam failed:  %d -- \"%s\".", s, strerror(s));
+ 
   sockets_open_stuff.sockets_open = 0;
 
   // open PTP sockets
