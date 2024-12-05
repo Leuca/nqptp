@@ -59,6 +59,10 @@ void debug_init(int level, int show_elapsed_time, int show_relative_time, int sh
   debugger_show_file_and_line = show_file_and_line;
 }
 
+int debug_level() {
+  return debuglev;
+}
+
 char *generate_preliminary_string(char *buffer, size_t buffer_length, double tss, double tsl,
                                   const char *filename, const int linenumber, const char *prefix) {
   size_t space_remaining = buffer_length;
