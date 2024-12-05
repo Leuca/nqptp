@@ -3,6 +3,8 @@
 
 AC_PREREQ([2.68])
 AC_INIT([nqptp], [1.2.5], [4265913+mikebrady@users.noreply.github.com])
+: ${CFLAGS="-O3"}
+: ${CXXFLAGS="-O3"}
 AM_INIT_AUTOMAKE
 AC_CANONICAL_HOST
 
