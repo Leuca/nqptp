@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.68])
-AC_INIT([nqptp], [1.2.6], [4265913+mikebrady@users.noreply.github.com])
+AC_INIT([nqptp], [1.2.8-dev], [4265913+mikebrady@users.noreply.github.com])
 : ${CFLAGS="-O3"}
 : ${CXXFLAGS="-O3"}
 AM_INIT_AUTOMAKE
@@ -58,6 +58,12 @@ AM_CONDITIONAL([INSTALL_SYSTEMD_STARTUP], [test "x$with_systemd_startup" = "xyes
 AC_ARG_WITH([freebsd-startup],[AS_HELP_STRING([--with-freebsd-startup],[install a FreeBSD startup script during a make install])])
 AM_CONDITIONAL([INSTALL_FREEBSD_STARTUP], [test "x$with_freebsd_startup" = "xyes"])
 
+# Determins where to install the systemd unit when requested
+AC_ARG_WITH([systemdsystemunitdir],
+  [AS_HELP_STRING([--with-systemdsystemunitdir=DIR],
+    [Directory for systemd service files @<:@auto@:>@])],
+  [with_systemdsystemunitdir=$withval],
+  [with_systemdsystemunitdir=auto])
 
 AC_CONFIG_SRCDIR([nqptp.c])
 AC_CONFIG_HEADERS([config.h])
@@ -65,6 +71,7 @@ AC_CONFIG_HEADERS([config.h])
 # Checks for programs.
 AC_PROG_CC
 AC_PROG_INSTALL
+PKG_PROG_PKG_CONFIG
 
 # Checks for libraries.
 AC_CHECK_LIB([pthread],[pthread_create], , AC_MSG_ERROR(pthread library needed))
@@ -83,6 +90,20 @@ AC_TYPE_UINT32_T
 # Checks for library functions.
 AC_FUNC_MALLOC
 AC_CHECK_FUNCS([clock_gettime inet_ntoa memset select socket strerror])
+
+# Configure the systemd unit location
+AS_IF([test "x$with_systemdsystemunitdir" = "xauto"],
+  [AS_IF([test "x$PKG_CONFIG" != "x"],
+    [with_systemdsystemunitdir=$($PKG_CONFIG --variable=systemdsystemunitdir systemd 2>/dev/null)],
+    [with_systemdsystemunitdir=])
+  AS_IF([test "x$with_systemdsystemunitdir" = "x"],
+    [with_systemdsystemunitdir='${prefix}/lib/systemd/system'])])
+
+AC_SUBST([systemdsystemunitdir], [$with_systemdsystemunitdir])
+
+AS_IF([test "x$with_systemd_startup" = "xyes"],
+  [AC_MSG_NOTICE([systemd unit directory: $with_systemdsystemunitdir])])
+
 
 AC_CONFIG_FILES([Makefile nqptp.service])
 AC_OUTPUT
