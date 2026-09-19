@@ -365,6 +365,7 @@ int main(int argc, char **argv) {
                   if (the_clock != -1) {
                     clocks_private[the_clock].time_of_last_use =
                         reception_time; // for garbage collection
+                    // debug_print_buffer(1, buf, recv_len); 
                     switch (buf[0] & 0xF) {
                     case Announce:
                       handle_announce(buf, recv_len, &clocks_private[the_clock], reception_time);
@@ -526,7 +527,7 @@ uint64_t broadcasting_task(uint64_t call_time, __attribute__((unused)) void *pri
               clocks_private[i].clock_id, clocks_private[i].ip, clocks_private[i].family,
               clocks_private[i].grandmasterPriority1, clocks_private[i].grandmasterPriority2);
         } else {
-          debug(1,
+          debug(3,
                 "Silent clock %" PRIx64
                 " detected, index %u, at follow_up_number %u at IP %s for client \"%s\". No "
                 "attempt to awaken it.",
