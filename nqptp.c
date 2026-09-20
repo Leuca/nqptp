@@ -321,7 +321,6 @@ int main(int argc, char **argv) {
             } else if (receiver_port == NQPTP_CONTROL_PORT) {
               handle_control_port_messages(buf, recv_len, reception_time);
             } else if (recv_len >= (ssize_t)sizeof(struct ptp_common_message_header)) {
-              debug_print_buffer(2, buf, recv_len);
 
               // check its credentials
               // the sending and receiving ports must be the same (i.e. 319 -> 319 or 320 -> 320)
@@ -365,7 +364,7 @@ int main(int argc, char **argv) {
                   if (the_clock != -1) {
                     clocks_private[the_clock].time_of_last_use =
                         reception_time; // for garbage collection
-                    // debug_print_buffer(1, buf, recv_len); 
+                    // debug_print_buffer(1, sender_string, buf, recv_len); 
                     switch (buf[0] & 0xF) {
                     case Announce:
                       handle_announce(buf, recv_len, &clocks_private[the_clock], reception_time);
@@ -378,7 +377,7 @@ int main(int argc, char **argv) {
                       handle_sync(buf, recv_len, &clocks_private[the_clock], reception_time);
                       break;
                     default:
-                      debug_print_buffer(2, buf,
+                      debug_print_buffer(2, sender_string, buf,
                                          recv_len); // unusual messages will have debug level 1.
                       break;
                     }
@@ -471,8 +470,6 @@ void send_awakening_announcement_sequence(const uint64_t clock_id, const char *c
       debug(1, "failed to resolve remote socket address (err=%d)", err);
     } else {
       // here, we have the destination, so send it
-
-      // debug_print_buffer(1, (char *)msg, msg_length);
       int ret = sendto(s, msg, msg_length, 0, res->ai_addr, res->ai_addrlen);
       if (ret == -1)
         debug(1, "result of sendto is %d.", ret);

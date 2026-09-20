@@ -113,14 +113,15 @@ void open_sockets_at_port(const char *node, uint16_t port,
   }
 }
 
-void debug_print_buffer(int level, char *buf, size_t buf_len) {
+void debug_print_buffer(int level, char * sender, char *buf, size_t buf_len) {
   if (debug_level() >= level) {
     // printf("Received %u bytes in a packet from %s:%d\n", buf_len, inet_ntoa(si_other.sin_addr),
     // ntohs(si_other.sin_port));
     char *obf =
-        malloc(buf_len * 4 + 1); // to be on the safe side -- 4 characters on average for each byte
+        malloc(strlen(sender) +1 + buf_len * 4 + 1); // to be on the safe side -- 4 characters on average for each byte
     if (obf != NULL) {
-      char *obfp = obf;
+      snprintf(obf, strlen(sender) + 2, "%s ", sender);
+      char *obfp = obf + strlen(sender) + 1;
       unsigned int obfc;
       for (obfc = 0; obfc < buf_len; obfc++) {
         snprintf(obfp, 3, "%02X", buf[obfc]);

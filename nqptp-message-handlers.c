@@ -405,12 +405,16 @@ void handle_follow_up(char *buf, ssize_t recv_len, clock_source_private_data *cl
           debug(2, "grandmaster has changed from %" PRIx64 " to %" PRIx64 ".",
                 clock_private_info->previous_offset_grandmaster,
                 clock_private_info->grandmasterIdentity);
+          // calculate the difference between offsets using the smoothed previous offset
+          int64_t alternative_new_to_old_clock_offset = clock_private_info->previous_offset - offset;
+          debug(2, "alternative_new_to_old_clock_offset offset is %" PRId64 " ns, %.6f sec.", alternative_new_to_old_clock_offset, alternative_new_to_old_clock_offset * 1E-9);
           // calculate the difference in the clocks
           int64_t difference_in_reception_times = reception_time - clock_private_info->previous_follow_up_reception_time;
           // debug(1, "difference in reception times: %" PRId64 ", %.3f sec.", difference_in_reception_times, difference_in_reception_times * 1e-9);
           int64_t new_to_old_clock_offset = clock_private_info->previous_preciseOriginTimestamp - (preciseOriginTimestamp - difference_in_reception_times);
-          clock_private_info->grandmasterChangeOffset = new_to_old_clock_offset;
+          clock_private_info->grandmasterChangeOffset = alternative_new_to_old_clock_offset;
           debug(2, "new_to_old offset is %" PRId64 " ns, %.6f sec.", clock_private_info->grandmasterChangeOffset, clock_private_info->grandmasterChangeOffset * 1E-9);
+          debug(2, "alternative-to-standard difference is %" PRId64 " ns, %.6f sec.", alternative_new_to_old_clock_offset - new_to_old_clock_offset, (alternative_new_to_old_clock_offset - new_to_old_clock_offset) * 1E-9);
           
           // pretend
           clock_private_info->previous_offset_time = clock_private_info->previous_follow_up_reception_time;
@@ -558,21 +562,22 @@ void handle_follow_up(char *buf, ssize_t recv_len, clock_source_private_data *cl
       const size_t kMinValueLen = 28;   // orgId..scaledLastGmFreqChange
 
       if ((size_t)recv_len < consumed + kTlvHeaderLen) {
-        debug(1, "FollowUp TLV truncated -- no room for TLV header (recv_len %u, consumed %zu).",
+        debug(2, "FollowUp TLV truncated -- no room for TLV header (recv_len %u, consumed %zu).",
               recv_len, consumed);
       } else {
         uint16_t tlvType = (uint16_t)((tlv[0] << 8) | tlv[1]);
         uint16_t tlvLen = (uint16_t)((tlv[2] << 8) | tlv[3]);
 
         if ((size_t)recv_len < consumed + kTlvHeaderLen + tlvLen) {
-          debug(1,
+          debug(2,
                 "FollowUp TLV truncated -- declared length %u exceeds packet (recv_len %u, "
                 "consumed %zu).",
                 tlvLen, recv_len, consumed);
         } else if (tlvType != 0x0003 || tlvLen < kMinValueLen) {
-          debug(1, "FollowUp TLV is not a usable Follow_Up Information TLV (type 0x%04x, len %u).",
+          debug(2, "FollowUp TLV is not a usable Follow_Up Information TLV (type 0x%04x, len %u).",
                 tlvType, tlvLen);
         } else {
+          // type is 3, ORGANIZATION_EXTENSION , Table 52, IEEE 2019
           uint8_t *val = tlv + kTlvHeaderLen; // start of organizationId
 
           uint32_t organizationId = ((uint32_t)val[0] << 16) | ((uint32_t)val[1] << 8) | val[2];
@@ -580,7 +585,7 @@ void handle_follow_up(char *buf, ssize_t recv_len, clock_source_private_data *cl
               ((uint32_t)val[3] << 16) | ((uint32_t)val[4] << 8) | val[5];
 
           if (organizationId != 0x0080C2 || organizationSubType != 1) {
-            debug(1,
+            debug(2,
                   "TLV has an Organization Extension format but isn't the standard 802.1AS "
                   "Follow_Up Information TLV (orgId 0x%06x, subType %u).",
                   organizationId, organizationSubType);
@@ -598,7 +603,7 @@ void handle_follow_up(char *buf, ssize_t recv_len, clock_source_private_data *cl
             uint64_t last_tlv_clock = nctoh64((uint8_t *)buf + 86);
             uint64_t huh = offset - lpt;
 
-            debug_print_buffer(2, buf, (size_t)recv_len);
+            debug_print_buffer(2, clock_private_info->ip, buf, (size_t)recv_len);
             debug(2,
                   "Clock ID: %" PRIx64 ", %" PRIx64 ", %s, Origin: %016" PRIx64 ", LPT: %016" PRIx64
                   ", Offset: %016" PRIx64 ", Universal Offset: %016" PRIx64 ", packet length: %u.",
@@ -610,7 +615,7 @@ void handle_follow_up(char *buf, ssize_t recv_len, clock_source_private_data *cl
                   "cumulativeScaledRateOffset: 0x%08x, "
                   "gmTimeBaseIndicator: %u, "
                   "lastGmPhaseChange: %s, "
-                  "scaledLastGmFreqChange: 0x%08x.",
+                  "scaledLastGmFreqChange: 0x%08x.\n",
                   cumulativeScaledRateOffset,
                   gmTimeBaseIndicator,
                   hex_string(lastGmPhaseChange, 12),
@@ -620,7 +625,7 @@ void handle_follow_up(char *buf, ssize_t recv_len, clock_source_private_data *cl
       }
 
     } else {
-      debug(1, "Follow_Up message is too small to be valid.");
+      debug(2, "Follow_Up message is too small to be valid.");
     }
   }
   clock_private_info->previous_follow_up_reception_time = reception_time;
