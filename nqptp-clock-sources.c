@@ -231,7 +231,9 @@ int create_clock_source_record(char *sender_string,
 }
 
 void update_master_clock_info(int client_id, uint64_t master_clock_id, const char *ip,
-                              uint64_t local_time, uint64_t local_to_master_offset,
+                              uint64_t local_time,
+                              uint64_t local_to_master_offset,
+                              uint64_t clock_change_offset,
                               uint64_t mastership_start_time) {
   // The update lands in the requesting client's own shared memory interface
   // only. Writing it to a single daemon-wide region is what let one client's
@@ -253,10 +255,12 @@ void update_master_clock_info(int client_id, uint64_t master_clock_id, const cha
     shared_memory->main.master_clock_start_time = mastership_start_time;
     shared_memory->main.local_time = local_time;
     shared_memory->main.local_to_master_time_offset = local_to_master_offset;
+    shared_memory->main.clock_change_offset = clock_change_offset;
   } else {
     shared_memory->main.master_clock_start_time = 0;
     shared_memory->main.local_time = 0;
     shared_memory->main.local_to_master_time_offset = 0;
+    shared_memory->main.clock_change_offset = 0;
   }
   __sync_synchronize();
   shared_memory->secondary = shared_memory->main;

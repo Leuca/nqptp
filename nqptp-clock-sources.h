@@ -33,7 +33,7 @@ typedef struct {
   int announcements_without_followups; // add 1 for every announce, reset with a followup
   uint64_t clock_id;
   uint64_t previous_offset, previous_offset_time, previous_offset_grandmaster,
-      previous_preciseOriginTimestamp;
+      previous_preciseOriginTimestamp, previous_follow_up_reception_time;
   uint64_t mastership_start_time; // set to the time of the first sample used as master
 
   // for garbage collection
@@ -52,6 +52,7 @@ typedef struct {
   uint8_t grandmasterPriority2;
   uint64_t grandmasterIdentity;
   uint16_t stepsRemoved;
+  int64_t grandmasterChangeOffset;
   int identical_previous_preciseOriginTimestamp_count;
   int wakeup_sent;
 
@@ -98,7 +99,9 @@ int delete_client(int client_id);
 int delete_clients();
 
 void update_master_clock_info(int client_id, uint64_t master_clock_id, const char *ip,
-                              uint64_t local_time, uint64_t local_to_master_offset,
+                              uint64_t local_time,
+                              uint64_t local_to_master_offset,
+                              uint64_t clock_change_offset,
                               uint64_t mastership_start_time);
 
 #endif

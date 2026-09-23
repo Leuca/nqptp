@@ -1,3 +1,19 @@
+##  Version: 1.2.9-dev-7-g49c419c, smi11
+
+This update in the `development` branch includes a number of updates to make clock handoff smoother. Clock handoff can occur when you add another player, such as a HomePod or Apple TV, to the output devices. The clocks in such devices may "take over" clocking at that point.
+
+* When a clock grandmaster changes (and its offset from local time changes), the difference between the old and new offsets is passed to Shairport Sync.
+* The PTP `correction_field` is used in calculating precise timing.
+* Smoothing continues even when grandmother clocks change.
+* Code has been added to explore standard added TLVs (Tag-Length-Value items) in PTP `FollowUp` messages.
+
+* The Shared Memory Interface (SMI) of the updated NQPTP is now 11, i.e. `smi11`:
+```
+$ nqptp -V
+Version: 1.2.9-dev-7-g49c419c. Shared Memory Interface Version: smi11.
+```
+Please note that the SMI version in NQPTP and Shairport Sync must match -- you may need to update Shairport Sync. At this time, the `development` branch of Shairport Sync is at `smi11`.
+
 ## Version 1.2.8
 * A new `man` file. Thanks again to [Chris Boot](https://github.com/bootc) for the [PR](https://github.com/mikebrady/nqptp/pull/48).
 
